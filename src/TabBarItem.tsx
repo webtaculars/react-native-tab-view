@@ -39,6 +39,7 @@ type Props<T extends Route> = {
   onPress: () => void;
   onLongPress: () => void;
   labelStyle?: StyleProp<TextStyle>;
+  activeTabStyle?: StyleProp<ViewStyle>;
   style: StyleProp<ViewStyle>;
 };
 
@@ -93,6 +94,7 @@ export default class TabBarItem<T extends Route> extends React.Component<
       pressColor,
       pressOpacity,
       labelStyle,
+      activeTabStyle = {},
       style,
       onLayout,
       onPress,
@@ -197,8 +199,11 @@ export default class TabBarItem<T extends Route> extends React.Component<
 
     const tabStyle = StyleSheet.flatten(style);
     const isWidthSet = tabStyle && tabStyle.width !== undefined;
-    const tabContainerStyle: ViewStyle | null = isWidthSet ? null : { flex: 1 };
+    const isActiveStyle = isFocused && activeTabStyle != null;
 
+    const tabContainerStyle: ViewStyle | null = isWidthSet ? isActiveStyle ? activeTabStyle.flex : { flex: 1 };
+
+    
     const scene = { route };
 
     let accessibilityLabel = getAccessibilityLabel(scene);
@@ -228,7 +233,7 @@ export default class TabBarItem<T extends Route> extends React.Component<
         onLongPress={onLongPress}
         style={tabContainerStyle}
       >
-        <View pointerEvents="none" style={[styles.item, tabStyle]}>
+        <View pointerEvents="none" style={[styles.item, tabStyle, isActiveStyle ? activeTabStyle : tabStyle]}>
           {icon}
           {label}
           {badge != null ? <View style={styles.badge}>{badge}</View> : null}
